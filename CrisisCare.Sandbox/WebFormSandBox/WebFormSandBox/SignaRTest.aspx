@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SignaRTest.aspx.cs" Inherits="WebFormSandBox.SignaRTest" %>
+﻿<%@ Page Title="POC SignalR" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="SignaRTest.aspx.cs" Inherits="WebFormSandBox.SignaRTest" %>
 
 <!DOCTYPE html>
 

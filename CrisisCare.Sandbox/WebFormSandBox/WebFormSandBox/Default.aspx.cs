@@ -13,6 +13,9 @@ namespace WebFormSandBox
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            lblTestLanguageFromCode.InnerText = Resources.Language.test;
+
+
             RadTreeView1.NodeCheck += RadTreeView1_NodeCheck1;
             DDTV_Test.EmbeddedTree.NodeCheck += RadTreeView1_NodeCheck1;
             //RadDropDownTree1.EntryAdded += RadDropDownTree1_EntryAdded;
