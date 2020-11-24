@@ -4,7 +4,22 @@
 
 <%@ Register Assembly="Telerik.Web.UI" Namespace="Telerik.Web.UI" TagPrefix="telerik" %>
 
+
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
+    <script type="text/javascript">
+        debugger;
+        $(function () {
+
+            var logger = $.connection.logHub;
+
+            logger.client.logMessage = function (msg) {
+
+                $("#logUl").append("<li>" + msg + "</li>");
+            };
+
+            $.connection.hub.start();
+        });
+    </script>
 
     <style type="text/css">
         .modalBackground {
@@ -26,11 +41,10 @@
         }
 
         .testAread {
-            background: #eeeeee; 
+            background: #eeeeee;
             padding: 10px;
-            margin:30px 0px;
+            margin: 30px 0px;
         }
-
     </style>
 
     <div class="jumbotron">

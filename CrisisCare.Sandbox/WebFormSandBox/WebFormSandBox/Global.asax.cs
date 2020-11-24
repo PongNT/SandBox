@@ -21,5 +21,7 @@ namespace WebFormSandBox
 
             //RouteTable.Routes.MapHubs("~/signalr");
         }
+
+        public static string AppFriendlyName => "Crisiscare- ASP.Net Webform sandbox";
     }
 }

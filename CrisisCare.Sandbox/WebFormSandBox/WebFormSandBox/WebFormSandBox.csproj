@@ -106,7 +106,7 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Telerik.Web.UI">
-      <HintPath>..\..\NubyTouch\CrisisCare\CrisisCare.Web\bin\Telerik.Web.UI.dll</HintPath>
+      <HintPath>..\..\..\..\..\NubyTouch\CrisisCare\CrisisCare.Web\bin\Telerik.Web.UI.dll</HintPath>
     </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
@@ -149,10 +149,6 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <EmbeddedResource Include="App_GlobalResources\Language.fr.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Language.fr.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="index.html" />
     <Content Include="Scripts\bootstrap.js" />
@@ -198,7 +194,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Language.resx</DependentUpon>
     </Compile>
-    <Compile Include="App_GlobalResources\Language.fr.Designer.cs">
+    <Compile Include="App_GlobalResources\Language.fr.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Language.fr.resx</DependentUpon>
@@ -231,6 +227,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="ChatHub.cs" />
+    <Compile Include="LogHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignaRTest.aspx.cs">
       <DependentUpon>SignaRTest.aspx</DependentUpon>
@@ -281,6 +278,10 @@
     <Content Include="App_GlobalResources\Language.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>Language.Designer.cs</LastGenOutput>
+    </Content>
+    <Content Include="App_GlobalResources\Language.fr.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Language.fr.designer.cs</LastGenOutput>
     </Content>
     <EmbeddedResource Include="Properties\licenses.licx" />
   </ItemGroup>
