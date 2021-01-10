@@ -43,18 +43,21 @@ namespace NubyTouch.SandBox.SimplePerfTester
                     (int i) =>
                     {
                         l.OrderByDescending(e => e.C1);
+                        foreach (var item in l){}
                     });
 
                 Tester("Tri C3",
                     (int i) =>
                     {
                         l.OrderByDescending(e => e.C3);
+                        foreach (var item in l) { }
                     });
 
                 Tester("Tri Id",
                     (int i) =>
                     {
                         l.OrderByDescending(e => e.Id);
+                        foreach (var item in l) { }
                     });
 
                 Tester("Recherche",
@@ -77,6 +80,7 @@ namespace NubyTouch.SandBox.SimplePerfTester
                     });
 
                 l.Clear();
+
                 #endregion
 
                 #region Tests KeyedCollection
@@ -97,18 +101,21 @@ namespace NubyTouch.SandBox.SimplePerfTester
                     (int i) =>
                     {
                         kc.OrderByDescending(e => e.C1);
+                        foreach (var item in kc) { }
                     });
 
                 Tester("Tri C3",
                     (int i) =>
                     {
                         kc.OrderByDescending(e => e.C3);
+                        foreach (var item in kc) { }
                     });
 
                 Tester("Tri Id",
                     (int i) =>
                     {
                         kc.OrderByDescending(e => e.Id);
+                        foreach (var item in kc) { }
                     });
 
                 searchItem = kc[kc.Count() / 2];
