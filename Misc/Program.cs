@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NubyTouch.Utils.Location;
 
 namespace NubyTouch.SandBox.SimplePerfTester
 {
@@ -12,10 +13,17 @@ namespace NubyTouch.SandBox.SimplePerfTester
     {
         static void Main(string[] args)
         {
+            string input;
+
             var nbIter = 100;
+
             var l = new List<TestClass>();
             var kc = new KeyedTestClass();
+            var cities = new FrenchZipCode.Cities();
+
+#pragma warning disable CS0168 // Variable is declared but never used
             TestClass searchItem;
+#pragma warning restore CS0168 // Variable is declared but never used
 
             ConsoleUtils.WriteTitle("Premier test ", 0);
 
@@ -23,6 +31,7 @@ namespace NubyTouch.SandBox.SimplePerfTester
             {
                 ConsoleUtils.Init();
 
+#if LISTxx
                 #region Tests List<string>
 
                 ConsoleUtils.WriteTitle($"Tests {l.GetType().Name}", 1);
@@ -43,7 +52,7 @@ namespace NubyTouch.SandBox.SimplePerfTester
                     (int i) =>
                     {
                         l.OrderByDescending(e => e.C1);
-                        foreach (var item in l){}
+                        foreach (var item in l) { }
                     });
 
                 Tester("Tri C3",
@@ -82,7 +91,9 @@ namespace NubyTouch.SandBox.SimplePerfTester
                 l.Clear();
 
                 #endregion
+#endif
 
+#if KCxx
                 #region Tests KeyedCollection
 
                 ConsoleUtils.WriteTitle($"Tests {kc.GetType().Name}", 1);
@@ -149,10 +160,49 @@ namespace NubyTouch.SandBox.SimplePerfTester
                     });
 
                 #endregion
+#endif
 
+#if FZC
+                #region Tests FrenchZipCode
+
+                ConsoleUtils.WriteTitle($"Tests {cities.GetType().Name}", 1);
+
+                //input = Console.ReadLine();
+                //if (!string.IsNullOrEmpty(input)) nbIter = int.Parse(input);
+                //Console.WriteLine();
+
+                cities.Clear();
+
+                ConsoleUtils.WriteTitle($"Tests {cities.GetType().Name} - Fake", 2);
+
+                Tester("Peuplement fake",
+                    (int i) =>
+                    {
+                        var zipCode = i.ToString("00000");
+                        var city = new FrenchZipCode.city() { name = "Name-" + i, slug = "Name-" + i, zip_code = zipCode, gps_lat = GetRnd(1000000), gps_lng = GetRnd(1000000), department_code = zipCode.Substring(1, 2), id = i.ToString(), insee_code = zipCode };
+                        cities.Add(city);
+                        if (i % 100000 == 0) ConsoleUtils.WriteProgress(i, nbIter);
+                    }, nbIter);
+
+                TesterCities(cities, nbIter);
+
+
+                ConsoleUtils.WriteTitle($"Tests {cities.GetType().Name} - Real", 2);
+                cities.Clear();
+                Tester("Désérialisation",
+                    (int i) =>
+                    {;
+                        var geoData = FrenchZipCode.GetData();
+                        cities = geoData.Cities;
+                    }, 1);
+
+                TesterCities(cities, nbIter);
+
+                #endregion
+#endif
                 ConsoleUtils.WriteTitle("Nouveau test ", 0);
                 ConsoleUtils.Write($"Nb d'élements (courant {nbIter}, 0 si terminé) : ");
-                var input = Console.ReadLine();
+                input = Console.ReadLine();
                 if (!string.IsNullOrEmpty(input)) nbIter = int.Parse(input);
                 Console.WriteLine();
 
@@ -160,6 +210,54 @@ namespace NubyTouch.SandBox.SimplePerfTester
 
             //Console.ReadLine();
 
+        }
+
+        private static void TesterCities(FrenchZipCode.Cities cities, int nbIter)
+        {
+
+            Tester("Tri ZipCode",
+                (int i) =>
+                {
+                    cities.OrderByDescending(c => c.zip_code);
+                    foreach (var item in cities) { }
+                });
+
+            Tester("Tri Id",
+                (int i) =>
+                {
+                    cities.OrderByDescending(c => c.insee_code);
+                    foreach (var item in cities) { }
+                });
+
+            var searchedCity = cities[cities.Count() / 2];
+
+            Tester("Recherche par clé",
+                (int i) =>
+                {
+                    if (cities.Contains(searchedCity.insee_code))
+                        ConsoleUtils.WriteLine($"{searchedCity.insee_code} trouvé", InfoType.result);
+                    else
+                        ConsoleUtils.WriteLine($"{searchedCity.insee_code} non trouvé", InfoType.error);
+                });
+
+            Tester("Recherche par non clé",
+                (int i) =>
+                {
+                    if (cities.Contains(searchedCity))
+                        ConsoleUtils.WriteLine($"{searchedCity.name} trouvé", InfoType.result);
+                    else
+                        ConsoleUtils.WriteLine($"{searchedCity.name} non trouvé", InfoType.error);
+                });
+
+            Tester("Where Linq",
+                (int i) =>
+                {
+                    var found = (cities.Where(c => c.insee_code == searchedCity.insee_code)).Any();
+                    if (found)
+                        ConsoleUtils.WriteLine($"{searchedCity.insee_code} trouvé", InfoType.result);
+                    else
+                        ConsoleUtils.WriteLine($"{searchedCity.insee_code} non trouvé", InfoType.error);
+                });
         }
 
         static Random rnd = new Random();
@@ -171,43 +269,18 @@ namespace NubyTouch.SandBox.SimplePerfTester
         private static void Tester(string actionName, Action<int> a, int nbIter = 1)
         {
             var sw = new Stopwatch();
-            ConsoleUtils.WriteTitle($"{actionName} : {nbIter} éléments.", 2);
+            //if (indentLevel == null) indentLevel = (short)(ConsoleUtils.CurrentIndentLevel + 1);
+            ConsoleUtils.Indent();
+            ConsoleUtils.WriteTitle($"{actionName} : {nbIter} itération(s).");
+            //ConsoleUtils.Indent();
             ConsoleUtils.WriteLine($"...");
             sw.Start();
             for (int i = 0; i < nbIter; i++) a(i);
             sw.Stop();
             ConsoleUtils.WriteLine("Fait en " + sw.ElapsedMilliseconds + " ms", InfoType.result);
+            ConsoleUtils.UnIndent();
+            ConsoleUtils.UnIndent();
         }
 
-        #region Data
-        private class TestClass
-        {
-
-            public TestClass()
-            {
-                Id = Guid.NewGuid().ToString();
-                Rank = currentRank;
-                currentRank += 1;
-            }
-
-            public string Id { get; }
-            public int Rank { get; }
-            public string C1 { get; set; }
-            public string C2 { get; set; }
-            public string C3 { get; set; }
-
-            private static int currentRank;
-
-            public static void ResetRank() => currentRank = 0;
-        }
-
-        private class KeyedTestClass : KeyedCollection<string, TestClass>
-        {
-            protected override string GetKeyForItem(TestClass item)
-            {
-                return item.Id;
-            }
-        }
-        #endregion  
     }
 }

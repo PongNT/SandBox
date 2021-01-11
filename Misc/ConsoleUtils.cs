@@ -9,15 +9,22 @@ namespace NubyTouch.SandBox.SimplePerfTester
     public static class ConsoleUtils
     {
 
-        private static short indentLevelSpaceLengh;
 
-        private static short currentIndentLevel;
+        #region Indentation
+        public static short CurrentIndentLevel { get; private set; } = 1;
+
+        private static short indentLevelSpaceLengh;
+        private static short maxIndentDepth = 4;
+        #endregion
 
         private static short maxLineSepLength;
 
         static ConsoleUtils() => Init();
 
-        public static void ResetIndentLEvel() => currentIndentLevel = 0;
+        public static void ResetIndentLEvel() => CurrentIndentLevel = 0;
+
+        public static void Indent() => CurrentIndentLevel = (short)Math.Min(CurrentIndentLevel + 1, maxIndentDepth);
+        public static void UnIndent() => CurrentIndentLevel = (short)Math.Max(CurrentIndentLevel - 1, 0);
 
         public static void Init(short indentLevelSpaceLengh = 4)
         {
@@ -26,9 +33,12 @@ namespace NubyTouch.SandBox.SimplePerfTester
             ResetIndentLEvel();
         }
 
-        public static void WriteTitle(string title, short indentLevel)
+        public static void WriteTitle(string title, short? indentLevel = null)
         {
-            currentIndentLevel = indentLevel;
+            if (indentLevel == null)
+                Indent();
+            else
+                CurrentIndentLevel = indentLevel.Value;
 
             char carsep;
             switch (indentLevel)
@@ -49,20 +59,23 @@ namespace NubyTouch.SandBox.SimplePerfTester
             }
 
             WriteLine();
-            var lineLength = maxLineSepLength - (indentLevel * indentLevelSpaceLengh);
-            WriteLine(new string(carsep, lineLength), InfoType.title, indentLevel, Console.ForegroundColor);
+            var lineLength = maxLineSepLength - (CurrentIndentLevel * indentLevelSpaceLengh);
+            WriteLine(new string(carsep, lineLength), InfoType.title, CurrentIndentLevel, Console.ForegroundColor);
             WriteLine();
-            WriteLine(title, InfoType._default, indentLevel, GetColorForInfoType(InfoType.title));
+            WriteLine(title, InfoType._default, CurrentIndentLevel, GetColorForInfoType(InfoType.title));
             if (indentLevel == 0) Console.WriteLine();
         }
 
         public static void WriteLine() => WriteLine(null);
-        public static void WriteLine(string r, InfoType type = InfoType._default, short indentLevel = -1, ConsoleColor? color = null) => Write_core(r, type, indentLevel, true, (color.HasValue) ? color.Value : GetColorForInfoType(type));
 
-        public static void Write(string r, InfoType type = InfoType._default, short indentLevel = -1, ConsoleColor? color = null) => Write_core(r, type, indentLevel, false, (color.HasValue)? color.Value: GetColorForInfoType(type));
+        public static void WriteLine(string r, InfoType type = InfoType._default, short? indentLevel = null, ConsoleColor? color = null) =>
+            Write_core(r, type, indentLevel ?? (short)(CurrentIndentLevel + 1), true, (color.HasValue) ? color.Value : GetColorForInfoType(type));
 
-        private static void Write_core(string r, InfoType type , short indentLevel , bool withNewLine, ConsoleColor color  ) { 
-            if (indentLevel == -1) indentLevel = (short)(currentIndentLevel + 1);
+        public static void Write(string r, InfoType type = InfoType._default, short? indentLevel = null, ConsoleColor? color = null) => Write_core(r, type, indentLevel ?? (short)(CurrentIndentLevel + 1), false, (color.HasValue) ? color.Value : GetColorForInfoType(type));
+
+        private static void Write_core(string r, InfoType type, short indentLevel, bool withNewLine, ConsoleColor color)
+        {
+            //if (indentLevel == null) indentLevel = (short)(CurrentIndentLevel + 1);
 
             Console.ForegroundColor = color; // GetColorForInfoType(type);
             var outPut = GetIndentationSpace(indentLevel) + r;
@@ -75,7 +88,7 @@ namespace NubyTouch.SandBox.SimplePerfTester
             switch (type)
             {
                 case InfoType.title:
-                    return ConsoleColor.Green;
+                    return ConsoleColor.Blue;
                 case InfoType.result:
                     return ConsoleColor.DarkYellow;
                 case InfoType.error:
