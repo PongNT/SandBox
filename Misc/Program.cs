@@ -5,12 +5,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NubyTouch.Utils.Location;
+using NubyTouch.Utils.Location.FrenchZipCode;
 
 namespace NubyTouch.SandBox.SimplePerfTester
 {
+
     class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
             string input;
@@ -19,7 +21,8 @@ namespace NubyTouch.SandBox.SimplePerfTester
 
             var l = new List<TestClass>();
             var kc = new KeyedTestClass();
-            var cities = new FrenchZipCode.Cities();
+            //var cities = new FrenchZipCode.Cities();
+            IEnumerable<CityFileRecord> cityRecords;
 
 #pragma warning disable CS0168 // Variable is declared but never used
             TestClass searchItem;
@@ -165,38 +168,46 @@ namespace NubyTouch.SandBox.SimplePerfTester
 #if FZC
                 #region Tests FrenchZipCode
 
-                ConsoleUtils.WriteTitle($"Tests {cities.GetType().Name}", 1);
+                //IList<FrenchZipCode.CityFileRecord> RecordsAsList() => (IList<FrenchZipCode.CityFileRecord>)cityRecords;
 
-                //input = Console.ReadLine();
-                //if (!string.IsNullOrEmpty(input)) nbIter = int.Parse(input);
-                //Console.WriteLine();
+                var baseTitle = $"Tests {typeof(Model).FullName}";
+                ConsoleUtils.WriteTitle(baseTitle, 1);
 
-                cities.Clear();
+                cityRecords = new List<CityFileRecord>();
 
-                ConsoleUtils.WriteTitle($"Tests {cities.GetType().Name} - Fake", 2);
+                ConsoleUtils.WriteTitle($"{baseTitle} - Fake", 2);
 
-                Tester("Peuplement fake",
-                    (int i) =>
-                    {
-                        var zipCode = i.ToString("00000");
-                        var city = new FrenchZipCode.city() { name = "Name-" + i, slug = "Name-" + i, zip_code = zipCode, gps_lat = GetRnd(1000000), gps_lng = GetRnd(1000000), department_code = zipCode.Substring(1, 2), id = i.ToString(), insee_code = zipCode };
-                        cities.Add(city);
-                        if (i % 100000 == 0) ConsoleUtils.WriteProgress(i, nbIter);
-                    }, nbIter);
+                ConsoleUtils.WriteLine($"{baseTitle} non effectués (plus nécessaire)");
+                //Tester("Peuplement fake",
+                //    (int i) =>
+                //    {
+                //        var zipCode = i.ToString("00000");
+                //        var cityRecord = new FrenchZipCode.CityFileRecord() { name = "Name-" + i, slug = "Name-" + i, zip_code = zipCode, gps_lat = GetRnd(1000000), gps_lng = GetRnd(1000000), department_code = zipCode.Substring(1, 2), id = i.ToString(), insee_code = zipCode };
+                //        ((IList<FrenchZipCode.CityFileRecord>)cityRecords).Add(cityRecord);
+                //        if (i % 100000 == 0) ConsoleUtils.WriteProgress(i, nbIter);
+                //    }, nbIter);
 
-                TesterCities(cities, nbIter);
+                //var searchedCity = RecordsAsList()[RecordsAsList().Count() / 2];
+
+                //TesterGeoData(cityRecords, nbIter);
 
 
-                ConsoleUtils.WriteTitle($"Tests {cities.GetType().Name} - Real", 2);
-                cities.Clear();
+                ConsoleUtils.WriteTitle($"{baseTitle} - Real", 2);
+
+                Model geoData = null;
+
+                //((IList<CityFileRecord>)cityRecords).Clear();
                 Tester("Désérialisation",
                     (int i) =>
-                    {;
-                        var geoData = FrenchZipCode.GetData();
-                        cities = geoData.Cities;
+                    {
+                        ;
+                        geoData = FrenchZipCode.GetData(true);
+                        cityRecords = geoData.CityFileRecords;
+
                     }, 1);
 
-                TesterCities(cities, nbIter);
+
+                TesterGeoData(geoData, nbIter);
 
                 #endregion
 #endif
@@ -212,52 +223,127 @@ namespace NubyTouch.SandBox.SimplePerfTester
 
         }
 
-        private static void TesterCities(FrenchZipCode.Cities cities, int nbIter)
+        private static void TesterGeoData(Model geoData, int nbIter)
         {
 
-            Tester("Tri ZipCode",
+            var searchedCityRecord = geoData.CityFileRecords[geoData.Cities.Count() / 2];
+            var records = geoData.CityFileRecords;
+            var cities = geoData.Cities;
+
+            ConsoleUtils.WriteLine();
+
+            ConsoleUtils.WriteLine($"{records.Count()} enregistrements", InfoType.result, 5);
+            ConsoleUtils.WriteLine($"{geoData.Regions.Count()} régions", InfoType.result, 5);
+            ConsoleUtils.WriteLine($"{geoData.Departments.Count()} départements", InfoType.result, 5);
+            ConsoleUtils.WriteLine($"{geoData.Cities.Count()} villes", InfoType.result, 5);
+            ConsoleUtils.WriteLine($"{geoData.MailOffices.Count()} bureaux de poste", InfoType.result, 5);
+
+#if DEBUG
+
+            #region Debug
+            var ZipCodesForSeveralCities = geoData.CityFileRecords.GroupBy(r => r.zip_code).Where(g => g.Count() > 1 && g.Key != null);
+            var MailOfficesForSeveralCities2 = geoData.MailOffices.Where(mo => mo.Cities.Count() > 1);
+
+            var dif = ZipCodesForSeveralCities.Where(g => !MailOfficesForSeveralCities2.Any(mo => g.Key == mo.zip_code)).SelectMany(x => x);
+
+            var countMailOfficesForSeveralCities = ZipCodesForSeveralCities.Count();//include null INseeCode
+            var countMailOfficesForSeveralCities2 = MailOfficesForSeveralCities2.Count();//
+
+            var countCitiesWithSeveralMailOffices = geoData.Cities.Where(c => c.MailOffices.Count() > 1).Count();
+            var vdm = geoData.Departments.FirstOrDefault(d => d.code == "94");
+            #endregion
+
+#endif
+
+            Tester("Tri name",
                 (int i) =>
                 {
-                    cities.OrderByDescending(c => c.zip_code);
-                    foreach (var item in cities) { }
+                    records.OrderByDescending(c => c.name);
+                    foreach (var item in records) { }
                 });
 
             Tester("Tri Id",
                 (int i) =>
                 {
-                    cities.OrderByDescending(c => c.insee_code);
-                    foreach (var item in cities) { }
+                    records.OrderByDescending(c => c.insee_code);
+                    foreach (var item in records) { }
                 });
 
-            var searchedCity = cities[cities.Count() / 2];
+            if (!cities.Any())
+            {
+                ConsoleUtils.WriteLine("La collection est vide. Test avorté.", InfoType.warning);
+                return;
+            }
 
             Tester("Recherche par clé",
                 (int i) =>
                 {
-                    if (cities.Contains(searchedCity.insee_code))
-                        ConsoleUtils.WriteLine($"{searchedCity.insee_code} trouvé", InfoType.result);
+                    if (cities.Contains(searchedCityRecord.insee_code))
+                        ConsoleUtils.WriteLine($"'{searchedCityRecord.insee_code}' trouvé", InfoType.result);
                     else
-                        ConsoleUtils.WriteLine($"{searchedCity.insee_code} non trouvé", InfoType.error);
+                        ConsoleUtils.WriteLine($"'{searchedCityRecord.insee_code}' non trouvé", InfoType.error);
                 });
 
             Tester("Recherche par non clé",
                 (int i) =>
                 {
-                    if (cities.Contains(searchedCity))
-                        ConsoleUtils.WriteLine($"{searchedCity.name} trouvé", InfoType.result);
+                    if (records.Contains(searchedCityRecord))
+                        ConsoleUtils.WriteLine($"'{searchedCityRecord.name}' trouvé", InfoType.result);
                     else
-                        ConsoleUtils.WriteLine($"{searchedCity.name} non trouvé", InfoType.error);
+                        ConsoleUtils.WriteLine($"'{searchedCityRecord.name}' non trouvé", InfoType.error);
                 });
 
             Tester("Where Linq",
                 (int i) =>
                 {
-                    var found = (cities.Where(c => c.insee_code == searchedCity.insee_code)).Any();
+                    var found = (records.Where(c => c.name == searchedCityRecord.name)).Any();
                     if (found)
-                        ConsoleUtils.WriteLine($"{searchedCity.insee_code} trouvé", InfoType.result);
+                        ConsoleUtils.WriteLine($"'{searchedCityRecord.name}' trouvé", InfoType.result);
                     else
-                        ConsoleUtils.WriteLine($"{searchedCity.insee_code} non trouvé", InfoType.error);
+                        ConsoleUtils.WriteLine($"'{searchedCityRecord.name}' non trouvé", InfoType.error);
                 });
+
+            Tester("Recherche doublons",
+                (int i) =>
+                {
+                    var twinsInseeCode_base = records.GroupBy(c => c.insee_code).Where(g => g.Count() > 1);
+                    var twinsInseeCode = twinsInseeCode_base.Select(x => new { CodeInsee = x.Key, Nb = x.Count() });
+                    var twinsInseeCodeAll = twinsInseeCode_base.SelectMany(x => x);
+                    ConsoleUtils.WriteLine($"{twinsInseeCode.Count()} doublons sur le code INSEE", InfoType.result);
+
+                    var twinsZipCode_base = records.GroupBy(c => c.zip_code).Where(g => g.Count() > 1);
+                    var twinsZipCode = twinsZipCode_base.Select(x => new { CP = x.Key, Nb = x.Count() });
+                    var twinsZipCodeAll = twinsZipCode_base.SelectMany(x => x);
+                    ConsoleUtils.WriteLine($"{twinsZipCode.Count()} doublons sur le code postal", InfoType.result);
+                }, 1);
+
+            Tester("Recherche '75013'",
+                   (int i) =>
+                   {
+                       var zipCode = "75013";
+                       var found = (geoData.MailOffices.Where(mo => mo.zip_code == zipCode)).Any();
+                       if (found)
+                           ConsoleUtils.WriteLine($"'{zipCode}' trouvé", InfoType.result);
+                       else
+                           ConsoleUtils.WriteLine($"'{zipCode}' non trouvé", InfoType.error);
+                   }, 1);
+
+
+            Tester("Communes des Hauts-de-Seine",
+                   (int i) =>
+                   {
+                       var deptCode = "92";
+                       var found = geoData.Departments.Contains(deptCode);
+                       if (found)
+                       {
+                           var hds = geoData.Departments[deptCode];
+                           ConsoleUtils.WriteLine($"Département '{deptCode}' trouvé", InfoType.result);
+                           ConsoleUtils.WriteLine($"{hds.name}. {hds.Cities.Count()} communes : ");
+                           foreach (var c in hds.Cities) ConsoleUtils.WriteLine($" - {c.name}");
+                       }
+                       else
+                           ConsoleUtils.WriteLine($"Département '{deptCode}' non trouvé", InfoType.error);
+                   }, 1);
         }
 
         static Random rnd = new Random();
@@ -273,10 +359,21 @@ namespace NubyTouch.SandBox.SimplePerfTester
             ConsoleUtils.Indent();
             ConsoleUtils.WriteTitle($"{actionName} : {nbIter} itération(s).");
             //ConsoleUtils.Indent();
+            ConsoleUtils.WriteLine();
             ConsoleUtils.WriteLine($"...");
+            ConsoleUtils.WriteLine();
             sw.Start();
-            for (int i = 0; i < nbIter; i++) a(i);
+            try
+            {
+                for (int i = 0; i < nbIter; i++) a(i);
+            }
+            catch (Exception e)
+            {
+                ConsoleUtils.WriteLine($"Erreur : {e.GetType().Name} - {e.Message}", InfoType.error);
+            }
+
             sw.Stop();
+            ConsoleUtils.WriteLine();
             ConsoleUtils.WriteLine("Fait en " + sw.ElapsedMilliseconds + " ms", InfoType.result);
             ConsoleUtils.UnIndent();
             ConsoleUtils.UnIndent();

@@ -1,0 +1,21 @@
+[
+{"id":29912,"department_code":"75","insee_code":"75056","zip_code":"75013","name":"Paris","slug":"paris","gps_lat":48.830759,"gps_lng":2.359204},
+{"id":29913,"department_code":"75","insee_code":"75056","zip_code":"75014","name":"Paris","slug":"paris","gps_lat":48.8314408,"gps_lng":2.3255684},
+{"id":29914,"department_code":"75","insee_code":"75056","zip_code":"75015","name":"Paris","slug":"paris","gps_lat":48.8421616,"gps_lng":2.2927665},
+{"id":29915,"department_code":"75","insee_code":"75056","zip_code":"75016","name":"Paris","slug":"paris","gps_lat":48.8530933,"gps_lng":2.2487626},
+{"id":29916,"department_code":"75","insee_code":"75056","zip_code":"75017","name":"Paris","slug":"paris","gps_lat":48.891986,"gps_lng":2.319287},
+{"id":29917,"department_code":"75","insee_code":"75056","zip_code":"75018","name":"Paris","slug":"paris","gps_lat":48.891305,"gps_lng":2.3529866999999998},
+{"id":29918,"department_code":"75","insee_code":"75056","zip_code":"75019","name":"Paris","slug":"paris","gps_lat":48.89061359999999,"gps_lng":2.3867083},
+{"id":29919,"department_code":"75","insee_code":"75056","zip_code":"75020","name":"Paris","slug":"paris","gps_lat":48.8599825,"gps_lng":2.4066412},
+{"id":29920,"department_code":"75","insee_code":"75056","zip_code":"75116","name":"Paris","slug":"paris","gps_lat":48.8585799,"gps_lng":2.2847017},
+{"id":29921,"department_code":"76","insee_code":"76001","zip_code":"76190","name":"Allouville-Bellefosse","slug":"allouville bellefosse","gps_lat":49.59175728155341,"gps_lng":0.65903145631068},
+{"id":29922,"department_code":"76","insee_code":"76002","zip_code":"76640","name":"Alvimare","slug":"alvimare","gps_lat":49.60717039999999,"gps_lng":0.63056453333333},
+{"id":29923,"department_code":"76","insee_code":"76004","zip_code":"76550","name":"Ambrumesnil","slug":"ambrumesnil","gps_lat":49.85760426666668,"gps_lng":0.9770168},
+{"id":29924,"department_code":"76","insee_code":"76005","zip_code":"76920","name":"Amfreville-la-Mi-Voie","slug":"amfreville la mi voie","gps_lat":49.40536391304347,"gps_lng":1.13035989130435},
+{"id":29925,"department_code":"76","insee_code":"76006","zip_code":"76560","name":"Amfreville-les-Champs","slug":"amfreville les champs","gps_lat":49.697608,"gps_lng":0.82734157142857},
+{"id":29926,"department_code":"76","insee_code":"76007","zip_code":"76710","name":"Anceaumeville","slug":"anceaumeville","gps_lat":49.56827074074072,"gps_lng":1.06580944444444},
+{"id":29927,"department_code":"76","insee_code":"76008","zip_code":"76370","name":"Ancourt","slug":"ancourt","gps_lat":49.90760550000005,"gps_lng":1.18257858333333},
+{"id":29928,"department_code":"76","insee_code":"76009","zip_code":"76560","name":"Ancourteville-sur-H\u00e9ricourt","slug":"ancourteville sur hericourt","gps_lat":49.69027166666664,"gps_lng":0.66289458333333},
+{"id":29929,"department_code":"76","insee_code":"76010","zip_code":"76760","name":"Ancreti\u00e9ville-Saint-Victor","slug":"ancretieville saint victor","gps_lat":49.6537294047619,"gps_lng":0.9688730952381},
+{"id":29930,"department_code":"76","insee_code":"76011","zip_code":"76540","name":"Ancretteville-sur-Mer","slug":"ancretteville sur mer","gps_lat":49.79179750000001,"gps_lng":0.503291}
+]

@@ -100,7 +100,7 @@ namespace NubyTouch.SandBox.SimplePerfTester
             }
         }
 
-        private static string GetIndentationSpace(short indentLevel) => ' '.Repeat(indentLevel * indentLevelSpaceLengh);
+        public static string GetIndentationSpace(short? indentLevel = null) => ' '.Repeat((indentLevel??CurrentIndentLevel) * indentLevelSpaceLengh);
 
         private static string Repeat(this char c, int count) => new string(c, count);
 
