@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace NubyTouch.Utils.Location.FrenchZipCode
 {
+    /// <summary>Not a DTO class. Built from a split of cities.json into <see cref="Cities"/> and <see cref="MailOffices"/></summary>
     [DebuggerDisplay("{name}, {insee_code}")]
     public class City
     {
@@ -17,11 +18,11 @@ namespace NubyTouch.Utils.Location.FrenchZipCode
         public string insee_code { get; set; }
         public string name { get; set; }
 
-        public department Department { get; internal set; }
+        public department Department { get => (FrenchZipCode.data.Departments.Contains(department_code)) ? FrenchZipCode.data.Departments[department_code] : null; }
 
         #region MailOffices
         internal MailOffices innerMaillOffices = new MailOffices();
-        public IEnumerable<MailOffice> MailOffices { get => innerMaillOffices.AsEnumerable(); }
+        public IEnumerable<PostOffice> MailOffices { get => innerMaillOffices.AsEnumerable(); }
         #endregion
 
         #endregion
@@ -62,7 +63,6 @@ namespace NubyTouch.Utils.Location.FrenchZipCode
                 }
             }
             var twinsStr = string.Join("\n", Twins);
-            System.Windows.Clipboard.SetText(twinsStr);
         }
 
         protected override string GetKeyForItem(City item) => item.insee_code;

@@ -33,7 +33,7 @@ namespace NubyTouch.Utils.Location.FrenchZipCode
             int nullPostalCodeNb = 0;
 
             City city = null;
-            MailOffice mailOffice;
+            PostOffice mailOffice;
 
             foreach (var rec in CityFileRecords)
             {
@@ -56,7 +56,7 @@ namespace NubyTouch.Utils.Location.FrenchZipCode
                         mailOffice = MailOffices[rec.zip_code];
                     else
                     {
-                        mailOffice = new MailOffice() { City = city, zip_code = rec.zip_code, name = rec.name, slug = rec.slug, gps_lat = rec.gps_lat, gps_lng = rec.gps_lng };
+                        mailOffice = new PostOffice() { zip_code = rec.zip_code, slug = rec.slug, gps_lat = rec.gps_lat, gps_lng = rec.gps_lng };
                         MailOffices.Add(mailOffice);
                         officeCreationNb += 1;
                     }
@@ -79,22 +79,17 @@ namespace NubyTouch.Utils.Location.FrenchZipCode
         public Departments Departments { get; private set; }
         public Cities Cities { get; private set; }
 
-        public department GetDepartment(City c)
-        {
-            var key = c.department_code;
-            if (Departments.Contains(key))
-                return Departments[key];
-            else
-            {
-                throw new KeyNotFoundException($"Unable to retrieve a department from the code '{key}'.");
-            }
-        }
-
         public department GetDepartment(string postalCode)
         {
-            MailOffice mailOffice = MailOffices.Where(c => c.zip_code == postalCode).First();
-            var city = mailOffice.City;
-            return GetDepartment(city);
+            var dptCode = GetDptCode(postalCode);
+            var departement = (Departments.Contains(dptCode)) ? Departments[dptCode] : null;
+            return departement;
+        }
+        internal static string GetDptCode(string postalCode)
+        {
+            var domTom = (postalCode.StartsWith("97") || postalCode.StartsWith("98"));
+            string r = (domTom) ? postalCode.Substring(0, 3) : postalCode.Substring(0, 2);
+            return r;
         }
     }
 }

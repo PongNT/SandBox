@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 
 namespace NubyTouch.Utils.Location.FrenchZipCode
 {
-
+    /// <summary>DTO for cities.json</summary>
     [DebuggerDisplay("#{id} - {name}, {insee_code}, {zip_code}")]
     public class CityFileRecord
     {
+        #region Properties
+
         public string id { get; set; }
         public string department_code { get; set; }
         public string insee_code { get; set; }
@@ -19,6 +21,8 @@ namespace NubyTouch.Utils.Location.FrenchZipCode
         public string gps_lat { get; set; }
         public string gps_lng { get; set; }
         public string slug { get; set; }
+
+        #endregion
 
         public override string ToString()
         {

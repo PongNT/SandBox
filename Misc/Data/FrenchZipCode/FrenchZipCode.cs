@@ -17,7 +17,6 @@ namespace NubyTouch.Utils.Location.FrenchZipCode
     //TODO: split classes into DTO and Model classes. Complete links in model classes. 
     {
 
-
         internal static Model data;
             
         public static Model GetData(bool reload = false, bool createLinks = false)

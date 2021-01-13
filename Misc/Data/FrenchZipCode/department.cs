@@ -8,14 +8,22 @@ using System.Threading.Tasks;
 
 namespace NubyTouch.Utils.Location.FrenchZipCode
 {
+    /// <summary>Enhanced DTO for department.json (sot not a real DTO :), to be splitted)</summary>
     [DebuggerDisplay("#{id}, {name}, {code}")]
     public class department
     {
+
+        #region Properties
+
+        #region DTO properties
         public string id { get; set; }
         public string region_code { get; set; }
         public string code { get; set; }
         public string name { get; set; }
         public string slug { get; set; }
+        #endregion
+
+        #region Extended properties (links)
 
         #region Region
 
@@ -38,12 +46,16 @@ namespace NubyTouch.Utils.Location.FrenchZipCode
         {
             get
             {
-                if (cities == null) 
-                    cities = new Cities( FrenchZipCode.data.Cities.Where(c => c.department_code == this.code));
+                if (cities == null)
+                    cities = new Cities(FrenchZipCode.data.Cities.Where(c => c.department_code == this.code));
                 return cities;
             }
             internal set => cities = value;
         }
+
+        #endregion
+
+        #endregion
 
         #endregion
 
