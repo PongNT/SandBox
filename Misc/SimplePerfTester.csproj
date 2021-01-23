@@ -53,7 +53,7 @@
     <Compile Include="Data\FrenchZipCode\CityFileRecord.cs" />
     <Compile Include="Data\FrenchZipCode\department.cs" />
     <Compile Include="Data\FrenchZipCode\FrenchZipCode.cs" />
-    <Compile Include="Data\FrenchZipCode\MailOffice.cs" />
+    <Compile Include="Data\FrenchZipCode\PostOffice.cs" />
     <Compile Include="Data\FrenchZipCode\Model.cs" />
     <Compile Include="Data\FrenchZipCode\region.cs" />
     <Compile Include="Program.cs" />

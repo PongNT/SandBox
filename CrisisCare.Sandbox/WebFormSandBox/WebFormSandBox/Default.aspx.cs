@@ -18,6 +18,7 @@ namespace WebFormSandBox
 
             RadTreeView1.NodeCheck += RadTreeView1_NodeCheck1;
             DDTV_Test.EmbeddedTree.NodeCheck += RadTreeView1_NodeCheck1;
+            
             //RadDropDownTree1.EntryAdded += RadDropDownTree1_EntryAdded;
             //RadDropDownTree1.EntryRemoved += RadDropDownTree1_EntryRemoved;
             DDTV_Test.DropDownSettings.CloseDropDownOnSelection = true;

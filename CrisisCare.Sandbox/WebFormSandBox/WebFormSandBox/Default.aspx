@@ -89,7 +89,7 @@
             <div class="col-md-4">
                 <asp:Button runat="server" />
                 <asp:Button ID="MyButton" OnClick="MyButton_Click" runat="server" />
-                <asp:DropDownList ID="DropDownList1"
+                <asp:DropDownList ID="DropDownList1" 
                     OnSelectedIndexChanged="DropDownList1_SelectedIndexChanged"
                     AutoPostBack="true" Width="250px" runat="server">
                     <asp:ListItem Selected="True" Value="White"> White </asp:ListItem>
@@ -110,7 +110,9 @@
 
             <div class="col-md-4">
                 <div class="treeViewWrapper">
-                    <telerik:RadTreeView RenderMode="Lightweight" runat="Server" ID="RadTreeView1" CheckBoxes="true" OnNodeCheck="RadTreeView1_NodeCheck">
+                                <asp:CheckBox AutoPostBack="true" runat="server" />
+
+                    <telerik:RadTreeView AutoPostBack="false" RenderMode="Lightweight" runat="Server" ID="RadTreeView1" CheckBoxes="true" OnNodeCheck="RadTreeView1_NodeCheck" >
                         <Nodes>
                             <telerik:RadTreeNode runat="server" Text="Island" Expanded="true" AllowDrag="false"
                                 AllowDrop="false">
@@ -125,6 +127,7 @@
                                             </telerik:RadTreeNode>
                                         </Nodes>
                                     </telerik:RadTreeNode>
+                                    
                                     <telerik:RadTreeNode runat="server" Text="Mauritius" AllowDrag="false">
                                         <Nodes>
                                             <telerik:RadTreeNode runat="server" Text="Weekend Package" AllowDrop="false" Value="2999">

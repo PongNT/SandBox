@@ -232,7 +232,7 @@ namespace NubyTouch.SandBox.SimplePerfTester
 
             ConsoleUtils.WriteLine();
 
-            ConsoleUtils.WriteLine($"{records.Count()} enregistrements", InfoType.result, 5);
+            ConsoleUtils.WriteLine($"{records.Count()} enregistrements dans cities.json (bureaux de poste et communes)", InfoType.result, 5);
             ConsoleUtils.WriteLine($"{geoData.Regions.Count()} régions", InfoType.result, 5);
             ConsoleUtils.WriteLine($"{geoData.Departments.Count()} départements", InfoType.result, 5);
             ConsoleUtils.WriteLine($"{geoData.Cities.Count()} villes", InfoType.result, 5);
@@ -242,15 +242,23 @@ namespace NubyTouch.SandBox.SimplePerfTester
 
             #region Debug
             var ZipCodesForSeveralCities = geoData.CityFileRecords.GroupBy(r => r.zip_code).Where(g => g.Count() > 1 && g.Key != null);
-            var MailOfficesForSeveralCities2 = geoData.MailOffices.Where(mo => mo.Cities.Count() > 1);
+            var MailOfficesForSeveralCities2 = geoData.MailOffices.Where(po => po.Cities.Count() > 1);
 
-            var dif = ZipCodesForSeveralCities.Where(g => !MailOfficesForSeveralCities2.Any(mo => g.Key == mo.zip_code)).SelectMany(x => x);
+            var dif = ZipCodesForSeveralCities.Where(g => !MailOfficesForSeveralCities2.Any(po => g.Key == po.zip_code)).SelectMany(x => x);
 
             var countMailOfficesForSeveralCities = ZipCodesForSeveralCities.Count();//include null INseeCode
             var countMailOfficesForSeveralCities2 = MailOfficesForSeveralCities2.Count();//
 
             var countCitiesWithSeveralMailOffices = geoData.Cities.Where(c => c.MailOffices.Count() > 1).Count();
             var vdm = geoData.Departments.FirstOrDefault(d => d.code == "94");
+
+            //Bureaux de poste dont les villes sont dans des départements différents
+            var ecartelés = geoData.MailOffices.Where(mo => mo.ServedDepartments.Count() > 1);
+            var ecartelés2 = geoData.Cities.Where(c => c.MailOffices.Any(po => po.department_code != c.department_code));
+
+            var chancia = geoData.Cities["39102"]; 
+
+            
             #endregion
 
 #endif
@@ -321,7 +329,7 @@ namespace NubyTouch.SandBox.SimplePerfTester
                    (int i) =>
                    {
                        var zipCode = "75013";
-                       var found = (geoData.MailOffices.Where(mo => mo.zip_code == zipCode)).Any();
+                       var found = (geoData.MailOffices.Where(po => po.zip_code == zipCode)).Any();
                        if (found)
                            ConsoleUtils.WriteLine($"'{zipCode}' trouvé", InfoType.result);
                        else
