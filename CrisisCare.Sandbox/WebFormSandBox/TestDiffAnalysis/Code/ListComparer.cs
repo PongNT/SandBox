@@ -29,7 +29,6 @@ namespace TestDiffAnalysis
             if (contentComparer == null) contentComparer = EqualityComparer<T>.Default;
 
             var removedItems = referenceCol.Except(newCol, identityComparer);
-            var executedList = removedItems.ToList();
             var addedItems = newCol.Except(referenceCol, identityComparer);
 
             var remainingItemsInRef = referenceCol.Intersect(newCol, identityComparer);

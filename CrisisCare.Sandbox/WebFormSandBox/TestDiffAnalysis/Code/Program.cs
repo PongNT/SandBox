@@ -10,13 +10,24 @@ namespace TestDiffAnalysis
     class Program
     {
 
+        #region Fields
+
+        static Stopwatch sw = new Stopwatch();
+        static string userInput;
+        static long executionTime;
+
+        #endregion
+
         static void Main(string[] args)
         {
             string testType = "1";
             do
             {
 
-                Console.Write($"TEST TYPE (1 : Int, 2 : Excel - default = {testType}, 'q' pour terminer) : ");
+                ConsoleUtils.WriteTitle($"TEST COLLECTION DIFF ANALYZER", 0);
+
+                ConsoleUtils.Write($"Test type (1 : Int, 2 : Excel - default = {testType}, 'q' to quit) : ");
+
                 userInput = Console.ReadLine();
                 if (userInput == "q") return;
 
@@ -27,37 +38,30 @@ namespace TestDiffAnalysis
                 else
                     ExcelTest();
 
-                Console.WriteLine($"Terminé en : {sw.ElapsedMilliseconds} ms");
-                Console.WriteLine();
-                Console.WriteLine("----------------------");
-                Console.WriteLine();
+                ConsoleUtils.WriteLine();
+
+                ConsoleUtils.WriteLine($"Completed in : {executionTime} ms");
 
             } while (true);
         }
-
-        #region Fields
-
-        static Stopwatch sw = new Stopwatch();
-        static string userInput;
-
-        #endregion
 
         #region Tests
 
         private static void IntTest()
         {
+            ConsoleUtils.WriteTitle($"Int collection test", 1);
             var nbItem = 10;
             var spread = 3;
             var previousNbItem = nbItem;
             var previousSpread = spread;
 
-            Console.Write($"Nb item (defaut = {nbItem}, 'q' pour terminer) : ");
+            ConsoleUtils.Write($"Nb item (defaut = {nbItem}, 'q' to quit) : ");
             userInput = Console.ReadLine();
             if (userInput == "q") return;
             var isUserInputValid = int.TryParse(userInput, out nbItem);
             if (!isUserInputValid) nbItem = previousNbItem;
 
-            Console.Write($"Dispersion (defaut = {spread}, 'q' pour terminer) : ");
+            ConsoleUtils.Write($"Dispersion (defaut = {spread}, 'q' to quit) : ");
             userInput = Console.ReadLine();
             if (userInput == "q") return;
             isUserInputValid = int.TryParse(userInput, out spread);
@@ -69,26 +73,39 @@ namespace TestDiffAnalysis
             var comparison = ilc.Compare(intListRef, intListNew);
             sw.Stop();
             Console.WriteLine();
-            Console.WriteLine(ToString(comparison));
+            ConsoleUtils.WriteLine(ToString(comparison), InfoType.result);
+            executionTime = sw.ElapsedMilliseconds;
+
         }
 
         private static void ExcelTest()
         {
+            long loadingTime;
+            long comparisonTime;
+
+            ConsoleUtils.WriteTitle($"Excel files test", 1);
+            ConsoleUtils.WriteLine();
             var appBaseDir = AppDomain.CurrentDomain.BaseDirectory;
 
             var excelFilePath = System.IO.Path.Combine(appBaseDir, @"Code\TestData\TestCompare.xlsx");
 
-            Console.Write($"Excel file path (default = \n {excelFilePath},\n 'q' pour terminer) : ");
+            ConsoleUtils.Write($"Excel file path (default = \n {excelFilePath},\n 'q' to quit) : ");
             userInput = Console.ReadLine();
+            ConsoleUtils.WriteLine();
             if (userInput == "q") return;
             if (!string.IsNullOrEmpty(userInput)) excelFilePath = userInput;
 
+            sw.Restart();
             XLWorkbook workbook = new XLWorkbook(excelFilePath);
             IXLWorksheet worksheetRef = workbook.Worksheet(1);
             IXLWorksheet worksheetNew = workbook.Worksheet(2);
 
             var rowsRef = worksheetRef.RowsUsed();
             var rowsNew = worksheetNew.RowsUsed();
+            sw.Stop();
+            loadingTime = sw.ElapsedMilliseconds;
+            ConsoleUtils.WriteLine();
+            ConsoleUtils.WriteLine($"Excel file loading : {loadingTime} ms");
 
             var excelComparer = new ListComparer<IXLRow>();
 
@@ -98,8 +115,15 @@ namespace TestDiffAnalysis
             sw.Restart();
             var r = excelComparer.Compare(rowsRef, rowsNew, xLRowIdentityComparer, xLRowContentComparer, (c) => c.RowNumber());
             sw.Stop();
+            comparisonTime = sw.ElapsedMilliseconds;
 
-            Console.WriteLine(ToString(r));
+            ConsoleUtils.WriteLine();
+            ConsoleUtils.WriteLine(ToString(r), InfoType.result);
+
+            ConsoleUtils.WriteLine();
+            ConsoleUtils.WriteLine($"Comparison : {comparisonTime} ms");
+
+            executionTime = loadingTime + comparisonTime;
         }
 
         #region Test data
@@ -157,7 +181,7 @@ namespace TestDiffAnalysis
             {
                 var v1 = row1.Cell(1).Value;
                 var v2 = row2.Cell(1).Value;
-                var r =string.Equals (v1, v2);
+                var r = string.Equals(v1, v2);
                 return r;
             }
 
