@@ -27,7 +27,7 @@ namespace TestDiffAnalysis
         {
             try
             {
-                var r = $"{Status}\t{Item?.ToString()??"null"}";
+                var r = $" {Item?.ToString()??"null"}\t : \t{Status}";
                 return r;
             }
             catch (System.Exception)
